@@ -12,11 +12,11 @@ import android.content.Context
 import android.opengl.GLES20.*
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix.*
-import android.util.Log
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.airhockey.R
 import com.example.airhockey.objects.Car
 import com.example.airhockey.objects.Line
-import com.example.airhockey.objects.Mallet
 import com.example.airhockey.objects.Table
 import com.example.airhockey.programs.ColorShaderProgram
 import com.example.airhockey.programs.TextureShaderProgram
@@ -47,24 +47,19 @@ class AirHockeyRenderer7
      */
     //添加冰球的类变量
     private lateinit var table: Table
-    private lateinit var mallet: Mallet
     private lateinit var line: Line
-    private lateinit var car: Car
+//    private lateinit var car: Car
 
-    private lateinit var carPosition: Point
+    private val carMap = hashMapOf<Int, Car>()
 
     private lateinit var textureShaderProgram: TextureShaderProgram
-    private lateinit var textureShaderProgram1: TextureShaderProgram
     private lateinit var colorShaderProgram: ColorShaderProgram
     private var texture: Int = 0
-    private var texture1: Int = 0
 
     private val viewMatrix = FloatArray(16)  //视图矩阵存储在viewMatrix中
     private val viewProjectionMatrix = FloatArray(16)
     private val modelViewProjectionMatrix = FloatArray(16)//用于保存矩阵乘法的结果
 
-    private var malletPressed = false//malletPressed来跟踪木槌当前是否已被按到
-    private lateinit var blueMalletPosition: Point   //将木槌的位置存储在blueMalletPosition
 
     /**
      * [viewProjectionMatrix]的逆矩阵
@@ -78,6 +73,7 @@ class AirHockeyRenderer7
     private val rightBound = 0.5F
     private val farBound = -0.8F
     private val nearBound = 0.8F
+
 
     //保证value的值不小于min而且不大于max
     private fun clamp(value: Float, min: Float, max: Float): Float {
@@ -96,25 +92,28 @@ class AirHockeyRenderer7
         return max.coerceAtMost(value.coerceAtLeast(min))
     }
 
-    //增加速度和方向属性
-    private lateinit var previousBlueMalletPosition: Point
-
     override fun onSurfaceCreated(p0: GL10?, p1: javax.microedition.khronos.egl.EGLConfig?) {
         //设置Clear颜色
         glClearColor(0f, 0f, 0f, 0f)
         table = Table()
 
-        car = Car()
-
-        carPosition = Point(-0.2F, -0.5F, 0F)
-
         line = Line()
 
         textureShaderProgram = TextureShaderProgram(context)
-        textureShaderProgram1 = TextureShaderProgram(context)
         colorShaderProgram = ColorShaderProgram(context)
         texture = context.loadTexture(R.drawable.table)
-        texture1 = context.loadTexture(R.drawable.car)
+
+//        car = Car(context,R.drawable.car,Point(-0.2F, -0.5F, 0F),textureShaderProgram)
+    }
+
+
+    fun addCar(car: Car) {
+        if (carMap.containsKey(car.id)) {
+            carMap.get(car.id)?.position = car.position
+        } else {
+            carMap.put(car.id, car)
+        }
+
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -129,14 +128,26 @@ class AirHockeyRenderer7
             10f
         )
 
-        setLookAtM(viewMatrix, 0, 0f, 1.2f, 2.2f, 0f, 0f, 0f, 0f, 1f, 0f)
-
+        setLookAtM(
+            viewMatrix,
+            0,
+            0f,
+            1.2f,
+            2.2f,
+            0f,
+            0f,
+            0f,
+            0f,
+            1f,
+            0f
+        )
     }
 
     /**
      * 往屏幕绘制内容
      * 使用纹理来进行绘制
      */
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onDrawFrame(gl: GL10?) {
         //清除之前绘制内容
         glClear(GL_COLOR_BUFFER_BIT)
@@ -158,15 +169,18 @@ class AirHockeyRenderer7
         table.bindData(textureShaderProgram)
         table.draw()
 
-        positionObjectInScene(carPosition.x, carPosition.y, carPosition.z)
-        textureShaderProgram1.useProgram()
-        textureShaderProgram1.setUniforms(modelViewProjectionMatrix, texture1)
-        car.bindData(textureShaderProgram1)
+        carMap.forEach { tag, car ->
+            drawCar(car)
+        }
+
+
+    }
+
+    fun drawCar(car: Car) {
+        positionObjectInScene(car.position.x, car.position.y, car.position.z)
+        textureShaderProgram.setUniforms(modelViewProjectionMatrix, car.texture)
+        car.bindData(textureShaderProgram)
         car.draw()
-
-
-        Log.d("A", "onDrawFrame: ${carPosition.y}")
-
     }
 
     private fun positionTableInScene() {
@@ -190,9 +204,9 @@ class AirHockeyRenderer7
     }
 
 
-    fun carPositionChange(normalizedX: Float, normlizedY: Float) {
+    fun carPositionChange(car: Car, normalizedX: Float, normlizedY: Float) {
 
-        carPosition = Point(
+        car.position = Point(
             normalizedX,
             normlizedY,
             0f

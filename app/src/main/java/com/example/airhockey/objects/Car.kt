@@ -1,14 +1,30 @@
 package com.example.airhockey.objects
 
+import Point
+import android.content.Context
 import android.opengl.GLES20.*
-import android.util.Log
+import android.opengl.Matrix.rotateM
+import android.opengl.Matrix.setIdentityM
+import androidx.annotation.DrawableRes
+import com.example.airhockey.R
 import com.example.airhockey.data.Constants.BYTES_PER_FLOAT
 import com.example.airhockey.data.VertexArray
 import com.example.airhockey.programs.TextureShaderProgram
+import com.example.airhockey.util.loadTexture
 
-class Car {
+class Car(
+    val id : Int,
+    val context: Context,
+    @DrawableRes val resId: Int,
+    var position: Point
+) {
 
     private val vertexArray: VertexArray = VertexArray(vertexData)
+
+    var texture: Int = 0
+    init {
+        texture = context.loadTexture(resId)
+    }
 
     companion object {
         private const val POSITION_COMPONENT_COUNT = 2
@@ -43,7 +59,10 @@ class Car {
             stride = STRIDE
         )
     }
+
     fun draw() {
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 6)
     }
 }
