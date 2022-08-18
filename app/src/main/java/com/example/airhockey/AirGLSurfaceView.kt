@@ -42,10 +42,10 @@ class AirGLSurfaceView @JvmOverloads constructor(
                         y += 0.01f
 
                         for (i in 0..5) {
-                            renderer.addCar(Car(i,context,R.drawable.img,Point((-0.2+0.2*i).toFloat(), -0.5F, 0F)))
+                            renderer.addCar(Car(i,context,R.drawable.car,Point((-0.2+0.2*i).toFloat(), -0.5F, 0F)))
                         }
 
-                        renderer.addCar(Car(1,context,R.drawable.img,Point((0).toFloat(), y, 0F)))
+                        renderer.addCar(Car(1,context,R.drawable.car,Point((0).toFloat(), y, 0F)))
                     }
                     true
                 }

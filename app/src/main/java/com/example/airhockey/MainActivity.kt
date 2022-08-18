@@ -12,46 +12,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 
 class MainActivity : AppCompatActivity() {
-    private var lifecycleState by mutableStateOf(Lifecycle.Event.ON_ANY)   //界面状态lifecycleState由mutableStateOf创建并托管
+    private lateinit var airGLSurfaceView : AirGLSurfaceView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_main)
-        // 观察lifecycle状态
-        lifecycle.addObserver(object : DefaultLifecycleObserver {
+        airGLSurfaceView = AirGLSurfaceView(this)
+        setContentView(airGLSurfaceView)
+    }
 
-            override fun onResume(owner: LifecycleOwner) {
-                super.onResume(owner)
-                lifecycleState = Lifecycle.Event.ON_RESUME
+    override fun onResume() {
+        super.onResume()
+        airGLSurfaceView.onResume()
+    }
 
-            }
-
-            override fun onPause(owner: LifecycleOwner) {
-                super.onPause(owner)
-                lifecycleState = Lifecycle.Event.ON_PAUSE
-            }
-
-        })
-        setContent {
-            //// 在Compose下托管传统视图
-            AndroidView(
-                factory = {
-
-                    AirGLSurfaceView(it)
-                },
-                //// lifecycleState更新时被回调
-                update = {
-                    when (lifecycleState) {
-                        Lifecycle.Event.ON_PAUSE -> {
-                            it.onPause()
-                        }
-                        Lifecycle.Event.ON_RESUME -> {
-                            it.onResume()
-
-                        }
-                        else -> {}
-                    }
-                }
-            )
-        }
+    override fun onPause() {
+        super.onPause()
+        airGLSurfaceView.onResume()
     }
 }

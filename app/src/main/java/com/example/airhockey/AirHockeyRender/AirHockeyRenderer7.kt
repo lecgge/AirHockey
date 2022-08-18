@@ -38,6 +38,12 @@ class AirHockeyRenderer7
     private val projectionMatrix: FloatArray = FloatArray(16)
 
     /**
+     * 平移矩阵
+     */
+
+    private val translationMatrix : FloatArray = FloatArray(16)
+
+    /**
      * 模型矩阵
      */
     private val modelMatrix = FloatArray(16)
@@ -128,6 +134,18 @@ class AirHockeyRenderer7
             10f
         )
 
+        //计算正交投影矩阵
+        val isLandscape = width > height
+        val aspectRatio = if (isLandscape) (width.toFloat()) / (height.toFloat()) else
+            (height.toFloat()) / (width.toFloat())
+        if (isLandscape) {
+            orthoM(translationMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f)
+        } else {
+            // 竖屏或正方形屏幕
+            orthoM(translationMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f)
+        }
+
+        //设置相机位置
         setLookAtM(
             viewMatrix,
             0,
@@ -195,24 +213,12 @@ class AirHockeyRenderer7
 
     private fun positionObjectInScene(x: Float, y: Float, z: Float) {
         setIdentityM(modelMatrix, 0)
-        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
+//        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
         translateM(modelMatrix, 0, x, y, z)
         multiplyMM(
-            modelViewProjectionMatrix, 0, viewProjectionMatrix,
+            modelViewProjectionMatrix, 0, translationMatrix,
             0, modelMatrix, 0
         )
-    }
-
-
-    fun carPositionChange(car: Car, normalizedX: Float, normlizedY: Float) {
-
-        car.position = Point(
-            normalizedX,
-            normlizedY,
-            0f
-        )
-
-
     }
 
     private fun convertNormalized2DPointToRay(normalizedX: Float, normalizedY: Float): Ray {
@@ -252,6 +258,5 @@ class AirHockeyRenderer7
         vector[1] /= vector[3]
         vector[2] /= vector[3]
     }
-
 
 }
