@@ -150,7 +150,7 @@ class AirHockeyRenderer3 (private val context: Context) : GLSurfaceView.Renderer
         //画桌子
        glDrawArrays(GL_TRIANGLE_FAN, 0, 6)//绘制桌子,第一个参数告诉OpenGL想要画三角形,第二个参数告诉OpenGL从顶点数组的开头开始读取顶点（offset）,第三个参数告诉OpenGL读取六个顶点
         //绘制分界线
-      glDrawArrays(GL_LINES, 6, 2)//需要从第七个顶点开始绘制，一共需要绘制两个顶点,0,1,2,3,4,5,6
+        glDrawArrays(GL_LINES, 6, 2)//需要从第七个顶点开始绘制，一共需要绘制两个顶点,0,1,2,3,4,5,6
         //把木槌画成点
        glDrawArrays(GL_POINTS, 8, 1)
 

@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/AirHockey/app/src/main/res/layout/activity_main.xml" value="0.278125" />
+        <entry key="..\:/work/2022_8_18/AirHockey/app/src/main/res/layout/activity_main.xml" value="0.17198581560283688" />
       </map>
     </option>
   </component>
@@ -12,5 +13,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.17198581560283688" />
+      </ProjectState>
+    </option>
   </component>
 </project>

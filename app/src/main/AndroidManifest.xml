@@ -4,6 +4,7 @@
     package="com.example.airhockey">
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
 

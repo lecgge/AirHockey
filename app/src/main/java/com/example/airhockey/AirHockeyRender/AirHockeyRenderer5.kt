@@ -51,7 +51,7 @@ class AirHockeyRenderer5(private val context: Context) : GLSurfaceView.Renderer 
     override fun onSurfaceCreated(p0: GL10?, p1: EGLConfig?) {
     //设置Clear颜色
         glClearColor(0f,0f,0f,0f)
-        table= Table()
+//        table= Table()
         mallet= Mallet(0.08F, 0.15F, 32)
         textureShaderProgram= TextureShaderProgram(context)
         colorShaderProgram= ColorShaderProgram(context)
