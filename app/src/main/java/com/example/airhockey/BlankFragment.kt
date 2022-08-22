@@ -35,7 +35,7 @@ class BlankFragment : Fragment() {
         activity?.apply {
             height = windowManager.currentWindowMetrics.bounds.height()
         }
-        context?.let { GLESHelper.init(context = it, renderer = AirHockeyRenderer(it)) }
+        context?.let { GLESHelper.init(context = it, renderer = AirHockeyRenderer1(it)) }
 
 
         var y = -0.5f
@@ -44,27 +44,34 @@ class BlankFragment : Fragment() {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.actionMasked) {
                     MotionEvent.ACTION_DOWN -> {
-                        GLESHelper.airGLSurfaceView.queueEvent {
-                            y += 0.01f
-                            z += 0.05f
-                            for (i in 0..5) {
 
+                        GLESHelper.airGLSurfaceView.queueEvent {
+                            for (i in 0..10) {
+                                GLESHelper.renderer.change(i)
                             }
-                            GLESHelper.renderer.moveTextureModel(
-                                Car(
-                                    1,
-                                    App.context,
-                                    Point((0).toFloat(), y, 0F)
-                                )
-                            )
-                            GLESHelper.renderer.moveTextureModel(
-                                Car(
-                                    0,
-                                    App.context,
-                                    Point(-0.2f, z, 0F)
-                                )
-                            )
                         }
+
+//                        GLESHelper.airGLSurfaceView.queueEvent {
+//                            y += 0.01f
+//                            z += 0.05f
+//                            for (i in 0..5) {
+//
+//                            }
+//                            GLESHelper.renderer.moveTextureModel(
+//                                Car(
+//                                    1,
+//                                    App.context,
+//                                    Point((0).toFloat(), y, 0F)
+//                                )
+//                            )
+//                            GLESHelper.renderer.moveTextureModel(
+//                                Car(
+//                                    0,
+//                                    App.context,
+//                                    Point(-0.2f, z, 0F)
+//                                )
+//                            )
+//                        }
                         return true
                     }
                     MotionEvent.ACTION_MOVE -> {

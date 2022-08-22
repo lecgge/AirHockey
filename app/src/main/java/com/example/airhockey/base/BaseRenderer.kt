@@ -195,7 +195,7 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     fun positionObjectInScene(model: Line) {
         Matrix.setIdentityM(modelMatrix, 0)
 //        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
-        Matrix.translateM(modelMatrix, 0,0f, model.position.y, 0f)
+        Matrix.translateM(modelMatrix, 0,model.position.x, model.position.y, model.position.z)
 
         Matrix.multiplyMM(
             modelViewProjectionMatrix, 0, translationMatrix,

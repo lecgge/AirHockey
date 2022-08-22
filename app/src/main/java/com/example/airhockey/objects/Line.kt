@@ -5,14 +5,19 @@ import com.example.airhockey.data.VertexArray
 import com.example.airhockey.programs.ColorShaderProgram
 
 class Line(
-    val position: Point,
+    var position: Point,
     val lineWidth: Float,
     val lineHeight: Float,
 ) {
-    private val vertexArray: VertexArray
-    private val drawList: List<DrawCommand>
+    private var vertexArray: VertexArray
+    private var drawList: List<DrawCommand>
 
     init {
+        val data = createLine(position,lineWidth, lineHeight)
+        vertexArray = VertexArray(data.vertexData)
+        drawList = data.drawCommands
+    }
+    fun change(){
         val data = createLine(position,lineWidth, lineHeight)
         vertexArray = VertexArray(data.vertexData)
         drawList = data.drawCommands
