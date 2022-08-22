@@ -1,33 +1,27 @@
 package com.example.airhockey.objects
 
-import Circle
-import Cylinder
 import Point
 import com.example.airhockey.data.VertexArray
 import com.example.airhockey.programs.ColorShaderProgram
 
-class Line {
+class Line(
+    val position: Point,
+    val lineWidth: Float,
+    val lineHeight: Float,
+) {
     private val vertexArray: VertexArray
     private val drawList: List<DrawCommand>
 
     init {
-        val data = createLine(
-        )
+        val data = createLine(position,lineWidth, lineHeight)
         vertexArray = VertexArray(data.vertexData)
         drawList = data.drawCommands
     }
 
-    private fun createLine(): GeneratedData {
-        // 添加顶部的圆，再添加配套的圆筒
-        return ObjectBuilder()
-            .createLine(Point(-0.5f,0.5f,0f),Point(-0.5f,-0.5f,0f))
-            .build()
-    }
-
-    fun bindData(colorShaderProgram: ColorShaderProgram) {
+    fun bindData(colorShaderProgram: ColorShaderProgram){
         vertexArray.setVertexAttribPointer(
             dataOffset = 0,
-            attributeLocation = colorShaderProgram.aPositionLocation,
+            attributeLocation =colorShaderProgram.aPositionLocation,
             componentCount = POSITION_COMPONENT_COUNT,
             stride = 0
         )
@@ -39,6 +33,13 @@ class Line {
         }
     }
 
+    fun createLine(
+        position: Point,
+        lineWidth: Float,
+        lineHeight: Float
+    ): GeneratedData {
+        return ObjectBuilder().appendLine(position, lineWidth,lineHeight).build()
+    }
 
     companion object {
         private const val POSITION_COMPONENT_COUNT = 3

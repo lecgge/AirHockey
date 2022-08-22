@@ -14,4 +14,8 @@ class AirHockeyRenderer(private val context: Context) : BaseRenderer(context) {
         addTextureModel(Table(1001, context, R.drawable.table, Point(0f, 0f, 0f)))
         super.onDrawFrame(gl)
     }
+
+    override fun change(y: Int) {
+
+    }
 }

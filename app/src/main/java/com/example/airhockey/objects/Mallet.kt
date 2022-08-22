@@ -39,8 +39,6 @@ numPointsAroundMallet: Int){
             componentCount = POSITION_COMPONENT_COUNT,
             stride = 0
         )
-
-
     }
 
     fun draw(){

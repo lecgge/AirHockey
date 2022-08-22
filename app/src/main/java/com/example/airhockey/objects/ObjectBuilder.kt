@@ -7,7 +7,6 @@ import Point
 import android.opengl.GLES20.*
 
 
-
 /**
  *@Author QiYuZhen
  *
@@ -16,26 +15,55 @@ class ObjectBuilder {
     private val vertexDataList: MutableList<Float> = mutableListOf()
     private val commands = mutableListOf<DrawCommand>()
 
-    fun createLine(point1: Point, point2: Point) : ObjectBuilder {
-        vertexDataList.apply {
-            //添加顶点
-            add(point1.x)
-            add(point1.y)
-            add(point1.z)
 
-            add(point2.x)
-            add(point2.y)
-            add(point2.z)
-        }
-
-        return this
-    }
+    //计算绘制一个矩形实际需要的顶点数，等于圆周顶点数+1
+    private fun sizeOfRectangle(): Int = 7
 
     //计算绘制一个圆实际需要的顶点数，等于圆周顶点数+2
     private fun sizeOfCircleInVertices(numPoints: Int): Int = numPoints + 2
 
     //计算绘制一个圆筒实际需要的顶点数，等于（圆周顶点数+1)*2
     private fun sizeOfOpenCylinderInVertices(numPoints: Int): Int = (numPoints + 1) * 2
+
+    fun appendLine(position: Point, lineWidth: Float, lineHeight: Float): ObjectBuilder {
+        val startVertex = vertexDataList.size / FLOATS_PER_VERTEX
+        val numPoints = 6
+        vertexDataList.apply {
+            val top = lineHeight / 2
+            val left = lineWidth / 2
+            //添加中点
+            add(position.x)
+            add(position.y)
+            add(position.z)
+
+            add(position.x - left)
+            add(position.y - top)
+            add(position.z)
+
+            add(position.x + left)
+            add(position.y - top)
+            add(position.z)
+
+            add(position.x + left)
+            add(position.y + top)
+            add(position.z)
+
+            add(position.x - left)
+            add(position.y + top)
+            add(position.z)
+
+            add(position.x - left)
+            add(position.y - top)
+            add(position.z)
+        }
+
+        commands.add {
+            glDrawArrays(GL_TRIANGLE_FAN, startVertex, numPoints)
+        }
+
+
+        return this
+    }
 
     /**
      *  使用三角形扇形构建圆
@@ -97,8 +125,10 @@ class ObjectBuilder {
                 //计算该点的角度
                 angleInRadians = (i.toDouble()) / (numPoints.toDouble()) * pi2
 
-                xPosition = cylinder.center.x + cylinder.radius * kotlin.math.cos(angleInRadians).toFloat()
-                zPosition = cylinder.center.z + cylinder.radius * kotlin.math.sin(angleInRadians).toFloat()
+                xPosition =
+                    cylinder.center.x + cylinder.radius * kotlin.math.cos(angleInRadians).toFloat()
+                zPosition =
+                    cylinder.center.z + cylinder.radius * kotlin.math.sin(angleInRadians).toFloat()
 
                 add(xPosition)
                 add(yStart)

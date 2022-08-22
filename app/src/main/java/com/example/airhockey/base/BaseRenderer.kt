@@ -6,9 +6,9 @@ import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import com.example.airhockey.objects.Line
 import com.example.airhockey.programs.ColorShaderProgram
 import com.example.airhockey.programs.TextureShaderProgram
-import com.example.airhockey.util.MatrixHelper
 import to
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
@@ -17,37 +17,37 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     /**
      * 透视投影矩阵
      */
-    private val projectionMatrix: FloatArray = FloatArray(16)
+    val projectionMatrix: FloatArray = FloatArray(16)
 
     /**
      * 正交投影矩阵
      */
-    private val translationMatrix: FloatArray = FloatArray(16)
+    val translationMatrix: FloatArray = FloatArray(16)
 
     /**
      * 模型矩阵
      */
-    private val modelMatrix = FloatArray(16)
+    val modelMatrix = FloatArray(16)
 
     /**
      * 视图矩阵
      */
-    private val viewMatrix = FloatArray(16)
+    val viewMatrix = FloatArray(16)
 
     /**
      * 视图矩阵与透视投影矩阵或者正交投影矩阵相乘后的结果矩阵，简称投影视图矩阵
      */
-    private val viewProjectionMatrix = FloatArray(16)
+    val viewProjectionMatrix = FloatArray(16)
 
     /**
      * 模型矩阵与投影视图矩阵相乘后的结果矩阵
      */
-    private val modelViewProjectionMatrix = FloatArray(16)
+    val modelViewProjectionMatrix = FloatArray(16)
 
     /**
      * [viewProjectionMatrix]的逆矩阵
      */
-    private val invertedViewProjectionMatrix = FloatArray(16)
+    val invertedViewProjectionMatrix = FloatArray(16)
 
     /**
      * 模型数组，包含创建的所有TextureModel
@@ -55,10 +55,10 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     private val modelMap = mutableMapOf<Int, BaseTextureModel>()
 
     //纹理着色器程序
-    private lateinit var textureShaderProgram: TextureShaderProgram
+    lateinit var textureShaderProgram: TextureShaderProgram
 
     //非纹理着色器程序
-    private lateinit var colorShaderProgram: ColorShaderProgram
+    lateinit var colorShaderProgram: ColorShaderProgram
 
     /**
      * 边界
@@ -68,25 +68,25 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     private val farBound = -0.8F
     private val nearBound = 0.8F
 
-
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         //设置Clear颜色
         GLES20.glClearColor(0f, 0f, 0f, 0f)
         textureShaderProgram = TextureShaderProgram(context)
         colorShaderProgram = ColorShaderProgram(context)
+
+
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)//这个方法设置了viewport的大小，这告诉了OpenGL可用于渲染的surface的大小
 
-        // 创建透视投影
-        MatrixHelper.perspectivew(
-            projectionMatrix,
+        //计算透视投影矩阵
+        Matrix.perspectiveM(projectionMatrix,
+            0,
             45f,
             width.toFloat() / height.toFloat(),
             1f,
-            10f
-        )
+            10f)
 
         //计算正交投影矩阵
         val isLandscape = width > height
@@ -175,7 +175,7 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
         model.draw(model.drawInfo.shaper, model.drawInfo.first, model.drawInfo.count)
     }
 
-    private fun positionObjectInScene(model: BaseTextureModel) {
+    fun positionObjectInScene(model: BaseTextureModel) {
         Matrix.setIdentityM(modelMatrix, 0)
 //        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
         Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
@@ -190,6 +190,17 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
                 0, modelMatrix, 0
             )
         }
+    }
+
+    fun positionObjectInScene(model: Line) {
+        Matrix.setIdentityM(modelMatrix, 0)
+//        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
+        Matrix.translateM(modelMatrix, 0,0f, model.position.y, 0f)
+
+        Matrix.multiplyMM(
+            modelViewProjectionMatrix, 0, translationMatrix,
+            0, modelMatrix, 0
+        )
     }
 
     private fun convertNormalized2DPointToRay(normalizedX: Float, normalizedY: Float): Ray {
@@ -228,4 +239,6 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
         vector[1] /= vector[3]
         vector[2] /= vector[3]
     }
+
+    abstract fun change(y : Int)
 }

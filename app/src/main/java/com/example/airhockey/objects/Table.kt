@@ -20,7 +20,7 @@ class Table(
     context: Context,
     resId: Int,
     position: Point,
-    isPerspective: Boolean = true
+    isPerspective: Boolean = false
 ) : BaseTextureModel(id, context, resId, position, isPerspective) {
 
 
@@ -35,11 +35,11 @@ class Table(
             // 数据顺序: X, Y, S, T
             // 三角形扇形
             0f, 0f, 0.5f, 0.5f,
-            -0.5f, -0.8f, 0f, 0.9f,
-            0.5f, -0.8f, 1f, 0.9f,
-            0.5f, 0.8f, 1f, 0.1f,
-            -0.5f, 0.8f, 0f, 0.1f,
-            -0.5f, -0.8f, 0f, 0.9f
+            -1f, -1f, 0f, 1f,
+            1f, -1f, 1f, 1f,
+            1f, 1f, 1f, 0f,
+            -1f, 1f, 0f, 0f,
+            -1f, -1f, 0f, 1f
         )
     }
 

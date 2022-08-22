@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.airhockey"
-        minSdk 27
+        minSdk 30
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -22,10 +22,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildFeatures {
-        // 启用 Jetpack Compose
-        compose true
-    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -40,20 +37,10 @@ android {
 
 dependencies {
    //添加依赖
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
     //implementation "androidx.compose.ui:ui:$compose_version"
     //implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
-    implementation "androidx.activity:activity-compose:1.4.0"
-    // Compose Material Design
-    implementation 'androidx.compose.material:material:1.0.1'
-    // Animations
-    implementation 'androidx.compose.animation:animation:1.0.1'
     // Tooling support (Previews, etc.)
     implementation 'androidx.compose.ui:ui-tooling:1.0.1'
-    // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07'
-    // UI Tests
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.0.1'
 
 
 
