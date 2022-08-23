@@ -1,14 +1,9 @@
 package com.example.airhockey
 
-import Point
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.util.AttributeSet
-import android.view.MotionEvent
-import com.example.airhockey.AirHockeyRender.AirHockeyRenderer
 import com.example.airhockey.base.BaseRenderer
-import com.example.airhockey.objects.Car
-import com.example.airhockey.objects.Table
 
 /**
  *@Author QiYuZhen

@@ -13,12 +13,14 @@ class Car(
     context: Context,
     position: Point,
     @DrawableRes resId: Int = R.drawable.car,
-    isPerspective: Boolean = false
-) : BaseTextureModel(id, context, resId, position) {
+    isTurn:Boolean = false,
+    turn:Float,
+    isPerspective: Boolean = false,
+) : BaseTextureModel(id, context, resId, position,isTurn,turn) {
 
     override fun draw() {
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+//        glEnable(GL_BLEND)
+//        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glDrawArrays(GL_TRIANGLE_FAN, 0, 6)
     }
 

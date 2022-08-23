@@ -6,6 +6,11 @@ import android.content.Context
 import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
+import android.opengl.Matrix.rotateM
+import android.util.Log
+import com.example.airhockey.App
+import com.example.airhockey.R
+import com.example.airhockey.objects.Car
 import com.example.airhockey.objects.Line
 import com.example.airhockey.programs.ColorShaderProgram
 import com.example.airhockey.programs.TextureShaderProgram
@@ -52,7 +57,7 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     /**
      * 模型数组，包含创建的所有TextureModel
      */
-    private val modelMap = mutableMapOf<Int, BaseTextureModel>()
+    val modelMap = mutableMapOf<Int, BaseTextureModel>()
 
     //纹理着色器程序
     lateinit var textureShaderProgram: TextureShaderProgram
@@ -70,23 +75,34 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         //设置Clear颜色
-        GLES20.glClearColor(0f, 0f, 0f, 0f)
+        GLES20.glClearColor(1f, 0f, 0f, 0f)
         textureShaderProgram = TextureShaderProgram(context)
         colorShaderProgram = ColorShaderProgram(context)
 
-
+        addTextureModel(
+            Car(
+                id = 0,
+                context = App.context,
+                position = Point(-0.35f, 0.1f, 0F),
+                resId = R.drawable.car,
+                isTurn = false,
+                turn = -5f
+            )
+        )
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         GLES20.glViewport(0, 0, width, height)//这个方法设置了viewport的大小，这告诉了OpenGL可用于渲染的surface的大小
 
         //计算透视投影矩阵
-        Matrix.perspectiveM(projectionMatrix,
+        Matrix.perspectiveM(
+            projectionMatrix,
             0,
             45f,
             width.toFloat() / height.toFloat(),
             1f,
-            10f)
+            10f
+        )
 
         //计算正交投影矩阵
         val isLandscape = width > height
@@ -113,6 +129,9 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
             1f,
             0f
         )
+//        gl?.glEnable(GLES20.GL_BLEND)
+//        gl?.glBlendFunc(GL_ONE, GL_ONE_MINUS_DST_ALPHA)
+
     }
 
     override fun onDrawFrame(gl: GL10?) {
@@ -129,22 +148,22 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
             0
         )
 
-        modelMap.forEach { id, model ->
-            drawTextureModel(model)
-        }
+
     }
 
     fun addTextureModel(model: BaseTextureModel) {
         if (modelMap.containsKey(model.id)) {
             moveTextureModel(model)
         } else {
-            modelMap.put(model.id,model)
+            modelMap.put(model.id, model)
         }
     }
 
     fun moveTextureModel(model: BaseTextureModel) {
         if (modelMap.containsKey(model.id)) {
             modelMap.get(model.id)?.position = model.position
+            modelMap.get(model.id)?.isTurn = model.isTurn
+            modelMap.get(model.id)?.turn = model.turn
         } else {
             addTextureModel(model)
         }
@@ -177,7 +196,12 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
 
     fun positionObjectInScene(model: BaseTextureModel) {
         Matrix.setIdentityM(modelMatrix, 0)
-//        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
+        if (model.isTurn) {
+            Log.d("TAG", "positionObjectInScene: ${model.turn}")
+            rotateM(modelMatrix, 0, model.turn, 0f, 0f, 1f)
+        } else {
+            rotateM(modelMatrix,0,0f,0f,0f,1f)
+        }
         Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
         if (model.isPerspective) {
             Matrix.multiplyMM(
@@ -195,7 +219,7 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     fun positionObjectInScene(model: Line) {
         Matrix.setIdentityM(modelMatrix, 0)
 //        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
-        Matrix.translateM(modelMatrix, 0,model.position.x, model.position.y, model.position.z)
+        Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
 
         Matrix.multiplyMM(
             modelViewProjectionMatrix, 0, translationMatrix,
@@ -240,5 +264,5 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
         vector[2] /= vector[3]
     }
 
-    abstract fun change(y : Int)
+    abstract fun change(y: Int)
 }

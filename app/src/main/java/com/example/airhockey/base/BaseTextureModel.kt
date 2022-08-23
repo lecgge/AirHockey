@@ -14,7 +14,9 @@ abstract class BaseTextureModel(
     val context: Context,
     @DrawableRes
     val resId: Int,
-    var position: Point
+    var position: Point,
+    var isTurn:Boolean,
+    var turn:Float
 ) : ITextureModel{
 
     //是否需要使用透视投影矩阵
@@ -26,8 +28,10 @@ abstract class BaseTextureModel(
         @DrawableRes
         resId: Int,
         position: Point,
-        isPerspective:Boolean
-    ) : this(id, context, resId, position){
+        isPerspective:Boolean,
+        isTurn: Boolean,
+        turn:Float
+    ) : this(id, context, resId, position,isTurn,turn){
         this.isPerspective = isPerspective
     }
 
