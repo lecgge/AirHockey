@@ -21,22 +21,6 @@ abstract class BaseTextureModel(
     var turn:Float
 ) : ITextureModel{
 
-    //是否需要使用透视投影矩阵
-    var isPerspective = false
-
-    constructor(
-        id: Int,
-        context: Context,
-        @DrawableRes
-        resId: Int,
-        position: Point,
-        isPerspective:Boolean,
-        isTurn: Boolean,
-        turn:Float
-    ) : this(id, context, resId, position,isTurn,turn){
-        this.isPerspective = isPerspective
-    }
-
     val vertexArray: VertexArray = VertexArray(vertexData)
     var texture: Int = 0
     init {

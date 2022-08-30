@@ -14,8 +14,7 @@ class Car(
     position: Point,
     @DrawableRes resId: Int = R.drawable.car,
     isTurn:Boolean = false,
-    turn:Float,
-    isPerspective: Boolean = false,
+    turn:Float
 ) : BaseTextureModel(id, context, resId, position,isTurn,turn) {
 
     override fun draw() {

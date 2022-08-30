@@ -16,8 +16,6 @@ class Line(
         drawList = data.drawCommands
     }
 
-
-
     fun createLine(
         position: Point,
         lineWidth: Float,

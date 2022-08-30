@@ -21,6 +21,7 @@ class AirHockeyRenderer1(private val context: Context,isPerspective:Boolean) : B
     override val textureModelMap: MutableMap<Int, BaseTextureModel> = mutableMapOf()
     override val colorModelMap: MutableMap<Int, BaseColorModel> = mutableMapOf()
 
+
     lateinit var lineLeft: Line
     lateinit var lineRight: Line
     lateinit var lineMid: Line
@@ -177,6 +178,11 @@ class AirHockeyRenderer1(private val context: Context,isPerspective:Boolean) : B
         } else {
             addColorModel(model)
         }
+    }
+
+    //边界检测
+    override fun clash() {
+        TODO("Not yet implemented")
     }
 
     override fun change(y: Float) {

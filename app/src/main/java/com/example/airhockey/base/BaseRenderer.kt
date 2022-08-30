@@ -9,6 +9,7 @@ import android.opengl.Matrix
 import android.opengl.Matrix.rotateM
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import com.example.airhockey.App.Companion.context
 import com.example.airhockey.programs.ColorShaderProgram
 import com.example.airhockey.programs.TextureShaderProgram
 import com.example.airhockey.util.loadTexture
@@ -16,7 +17,7 @@ import to
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-abstract class BaseRenderer(private val context: Context,var isPerspective:Boolean) : GLSurfaceView.Renderer, ModelMap {
+abstract class BaseRenderer(private val context: Context,var isPerspective:Boolean) : GLSurfaceView.Renderer, ModelMap,IRenderer {
     /**
      * 透视投影矩阵
      */
@@ -28,12 +29,12 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
     val translationMatrix: FloatArray = FloatArray(16)
 
     /**
-     * 模型矩阵
+     * 纹理模型矩阵
      */
     val modelMatrix = FloatArray(16)
 
     /**
-     * 视图矩阵
+     * 纹理模型视图矩阵
      */
     val viewMatrix = FloatArray(16)
 
@@ -52,16 +53,14 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
      */
     val invertedViewProjectionMatrix = FloatArray(16)
 
-    /**
-     * 模型数组，包含创建的所有TextureModel
-     */
-    val modelMap = mutableMapOf<Int, BaseTextureModel>()
-
     //纹理着色器程序
     lateinit var textureShaderProgram: TextureShaderProgram
 
     //非纹理着色器程序
     lateinit var colorShaderProgram: ColorShaderProgram
+
+    //颜色着色器程序-颜色属性
+    var color:Color = Color(1f,1f,1f)
 
     /**
      * 边界
@@ -77,6 +76,7 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
         textureShaderProgram = TextureShaderProgram(context)
         colorShaderProgram = ColorShaderProgram(context)
 
+        //为每个纹理模型加载纹理数据
         textureModelMap.forEach { key,value ->
             value.texture = context.loadTexture(value.texture)
         }
@@ -89,7 +89,7 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
         Matrix.perspectiveM(
             projectionMatrix,
             0,
-            -45f,
+            45f,
             width.toFloat() / height.toFloat(),
             1f,
             10f
@@ -120,6 +120,7 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
             1f,
             0f
         )
+
 //        gl?.glEnable(GLES20.GL_BLEND)
 //        gl?.glBlendFunc(GL_ONE, GL_ONE_MINUS_DST_ALPHA)
 
@@ -128,58 +129,29 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
     override fun onDrawFrame(gl: GL10?) {
         //清除之前绘制内容
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-        Matrix.multiplyMM(
-            viewProjectionMatrix,
-            0,
-            projectionMatrix,
-            0,
-            viewMatrix,
-            0
-        )
-//        if (isPerspective) {
-//            //投影矩阵和视图矩阵相乘的结果缓存到viewProjectionMatrix
-//
-//        } else {
-//            Matrix.multiplyMM(
-//                viewProjectionMatrix,
-//                0,
-//                translationMatrix,
-//                0,
-//                viewMatrix,
-//                0
-//            )
-//        }
 
-    }
 
-    abstract fun drawTextureModel()
-
-    abstract fun drawColorModel()
-
-    fun addTextureModelImpl(model: BaseTextureModel) {
-        if (modelMap.containsKey(model.id)) {
-            moveTextureModelImpl(model)
+        if (isPerspective) {
+            //投影矩阵和视图矩阵相乘的结果缓存到viewProjectionMatrix
+            Matrix.multiplyMM(
+                viewProjectionMatrix,
+                0,
+                projectionMatrix,
+                0,
+                viewMatrix,
+                0
+            )
         } else {
-            modelMap.put(model.id, model)
+            Matrix.multiplyMM(
+                viewProjectionMatrix,
+                0,
+                translationMatrix,
+                0,
+                viewMatrix,
+                0
+            )
         }
-    }
 
-    abstract fun addTextureModel(model: BaseTextureModel)
-
-    abstract fun moveTextureModel(model: BaseTextureModel)
-
-    abstract fun addColorModel(model: BaseColorModel)
-
-    abstract fun moveColorModel(model: BaseColorModel)
-
-    fun moveTextureModelImpl(model: BaseTextureModel) {
-        if (modelMap.containsKey(model.id)) {
-            modelMap.get(model.id)?.position = model.position
-            modelMap.get(model.id)?.isTurn = model.isTurn
-            modelMap.get(model.id)?.turn = model.turn
-        } else {
-            addTextureModelImpl(model)
-        }
     }
 
     //保证value的值不小于min而且不大于max
@@ -199,39 +171,60 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
         return max.coerceAtMost(value.coerceAtLeast(min))
     }
 
+    //绘制纹理模型
     fun drawTextureModel(model: BaseTextureModel) {
+        //设置模型在屏幕中的显示效果
         positionObjectInScene(model)
+        //使用纹理哦着色器程序
         textureShaderProgram.useProgram()
+        //将模型视图矩阵与纹理传给着色器程序
         textureShaderProgram.setUniforms(modelViewProjectionMatrix, model.texture)
+        //绑定纹理着色器程序
         model.bindData(textureShaderProgram)
+        //绘制纹理模型
         model.draw(model.drawInfo.shaper, model.drawInfo.first, model.drawInfo.count)
     }
 
     fun drawColorModel(model: BaseColorModel) {
+        //设置模型在屏幕中的显示效果
         positionObjectInScene(model)
+        //使用颜色着色器程序
         colorShaderProgram.useProgram()
-        colorShaderProgram.setUniforms(modelViewProjectionMatrix, Color(1f, 1f, 1f))
+        //将模型视图矩阵与颜色数据传给着色器程序
+        colorShaderProgram.setUniforms(modelViewProjectionMatrix, color)
+        //绑定颜色着色器程序
         model.bindData(colorShaderProgram = colorShaderProgram)
+        //绘制纹理模型
         model.draw()
     }
 
+    //对纹理的模型矩阵和视图矩阵进行计算
     fun positionObjectInScene(model: BaseTextureModel) {
         Matrix.setIdentityM(modelMatrix, 0)
-        modelViewProjectionMatrix = FloatArray(16)
+        //纹理模型旋转判断，绕Z轴旋转
         if (model.isTurn) {
             rotateM(modelMatrix, 0, model.turn, 0f, 0f, 1f)
         }
+        //当使用透视投影矩阵时，我们应该使用旋转矩阵将在x0y平面的图像绕x轴旋转
+        if (isPerspective) {
+            rotateM(modelMatrix,0,-45f,1f,0f,0f)
+        }
+        //计算模型的位置矩阵
         Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
-
+        //计算模型最终的视图矩阵
         Matrix.multiplyMM(
             modelViewProjectionMatrix, 0, viewProjectionMatrix,
             0, modelMatrix, 0
         )
     }
 
+    //对非纹理的模型矩阵和视图矩阵进行计算
     fun positionObjectInScene(model: BaseColorModel) {
         Matrix.setIdentityM(modelMatrix, 0)
-//        rotateM(modelMatrix, 0, -180f, 0f, 1f, 0f)
+        //当使用透视投影矩阵时，我们应该使用旋转矩阵将在x0y平面的图像绕x轴旋转
+        if (isPerspective) {
+            rotateM(modelMatrix,0,-45f,1f,0f,0f)
+        }
         Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
 
         Matrix.multiplyMM(
