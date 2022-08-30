@@ -6,6 +6,7 @@ import android.opengl.GLES20
 import android.opengl.GLSurfaceView
 import android.util.Log
 import androidx.annotation.DrawableRes
+import com.example.airhockey.base.GLESHelper.init
 import com.example.airhockey.data.Constants
 import com.example.airhockey.data.VertexArray
 import com.example.airhockey.programs.TextureShaderProgram
@@ -18,7 +19,8 @@ abstract class BaseTextureModel(
     val resId: Int,
     var position: Point,
     var isTurn:Boolean,
-    var turn:Float
+    var turn:Float,
+    var hierarchy:Int
 ) : ITextureModel{
 
     val vertexArray: VertexArray = VertexArray(vertexData)

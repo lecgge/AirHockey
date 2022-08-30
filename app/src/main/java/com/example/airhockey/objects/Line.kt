@@ -9,7 +9,8 @@ class Line(
     position: Point,
     val lineWidth: Float,
     val lineHeight: Float,
-) : BaseColorModel(id,position) {
+    hierarchy:Int
+) : BaseColorModel(id,position,hierarchy) {
     init {
         val data = createLine(position,lineWidth, lineHeight)
         vertexArray = VertexArray(data.vertexData)

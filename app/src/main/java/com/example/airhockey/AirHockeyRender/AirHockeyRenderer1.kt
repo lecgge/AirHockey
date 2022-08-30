@@ -10,8 +10,10 @@ import androidx.compose.ui.graphics.Color
 import com.example.airhockey.base.BaseColorModel
 import com.example.airhockey.base.BaseRenderer
 import com.example.airhockey.base.BaseTextureModel
+import com.example.airhockey.base.HierarchyClass
 import com.example.airhockey.objects.Line
 import com.example.airhockey.util.loadTexture
+import java.math.BigDecimal.ONE
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
@@ -55,37 +57,37 @@ class AirHockeyRenderer1(private val context: Context,isPerspective:Boolean) : B
     lateinit var line23: Line
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         super.onSurfaceCreated(gl, config)
-        line0 = Line(0, Point(-0.18f, 0.05f, 0f), 0.1f, 0.2f)
-        line1 = Line(1, Point(-0.18f, 0.2f, 0f), 0.1f, 0.2f)
-        line2 = Line(2, Point(-0.18f, 0.35f, 0f), 0.1f, 0.2f)
-        line3 = Line(3, Point(-0.18f, 0.5f, 0f), 0.1f, 0.2f)
-        line4 = Line(4, Point(-0.18f, 0.65f, 0f), 0.1f, 0.2f)
-        line5 = Line(5, Point(-0.18f, 0.8f, 0f), 0.1f, 0.2f)
+        line0 = Line(0, Point(-0.18f, 0.05f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line1 = Line(1, Point(-0.18f, 0.2f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line2 = Line(2, Point(-0.18f, 0.35f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line3 = Line(3, Point(-0.18f, 0.5f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line4 = Line(4, Point(-0.18f, 0.65f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line5 = Line(5, Point(-0.18f, 0.8f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
 
-        line6 = Line(6, Point(0.18f, 0.05f, 0f), 0.1f, 0.2f)
-        line7 = Line(7, Point(0.18f, 0.2f, 0f), 0.1f, 0.2f)
-        line8 = Line(8, Point(0.18f, 0.35f, 0f), 0.1f, 0.2f)
-        line9 = Line(9, Point(0.18f, 0.5f, 0f), 0.1f, 0.2f)
-        line10 = Line(10, Point(0.18f, 0.65f, 0f), 0.1f, 0.2f)
-        line11 = Line(11, Point(0.18f, 0.8f, 0f), 0.1f, 0.2f)
+        line6 = Line(6, Point(0.18f, 0.05f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line7 = Line(7, Point(0.18f, 0.2f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line8 = Line(8, Point(0.18f, 0.35f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line9 = Line(9, Point(0.18f, 0.5f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line10 = Line(10, Point(0.18f, 0.65f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line11 = Line(11, Point(0.18f, 0.8f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
 
-        line12 = Line(12, Point(0.18f, 0.95f, 0f), 0.1f, 0.2f)
-        line13 = Line(13, Point(0.18f, 1.1f, 0f), 0.1f, 0.2f)
-        line14 = Line(14, Point(0.18f, 1.25f, 0f), 0.1f, 0.2f)
-        line15 = Line(15, Point(0.18f, 1.4f, 0f), 0.1f, 0.2f)
-        line16 = Line(16, Point(0.18f, 1.55f, 0f), 0.1f, 0.2f)
-        line17 = Line(17, Point(0.18f, 1.7f, 0f), 0.1f, 0.2f)
+        line12 = Line(12, Point(0.18f, 0.95f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line13 = Line(13, Point(0.18f, 1.1f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line14 = Line(14, Point(0.18f, 1.25f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line15 = Line(15, Point(0.18f, 1.4f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line16 = Line(16, Point(0.18f, 1.55f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line17 = Line(17, Point(0.18f, 1.7f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
 
-        line18 = Line(18, Point(-0.18f, 0.05f, 0f), 0.1f, 0.2f)
-        line19 = Line(19, Point(-0.18f, 0.2f, 0f), 0.1f, 0.2f)
-        line20 = Line(20, Point(-0.18f, 0.35f, 0f), 0.1f, 0.2f)
-        line21 = Line(21, Point(-0.18f, 0.5f, 0f), 0.1f, 0.2f)
-        line22 = Line(22, Point(-0.18f, 0.65f, 0f), 0.1f, 0.2f)
-        line23 = Line(23, Point(-0.18f, 0.8f, 0f), 0.1f, 0.2f)
+        line18 = Line(18, Point(-0.18f, 0.05f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line19 = Line(19, Point(-0.18f, 0.2f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line20 = Line(20, Point(-0.18f, 0.35f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line21 = Line(21, Point(-0.18f, 0.5f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line22 = Line(22, Point(-0.18f, 0.65f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
+        line23 = Line(23, Point(-0.18f, 0.8f, 0f), 0.1f, 0.2f,HierarchyClass.ONE)
 
-        lineLeft = Line(24,Point(0.4f, 0f, 0f), 0.15f, 2f)
-        lineRight = Line(25,Point(-0.4f, 0f, 0f), 0.15f, 2f)
-        lineMid = Line(26,Point(0f, 0f, 0f), 0.15f, 2f)
+        lineLeft = Line(24,Point(0.4f, 0f, 0f), 0.15f, 2f,HierarchyClass.ONE)
+        lineRight = Line(25,Point(-0.4f, 0f, 0f), 0.15f, 2f,HierarchyClass.ONE)
+        lineMid = Line(26,Point(0f, 0f, 0f), 0.15f, 2f,HierarchyClass.ONE)
 
         addColorModel(line0)
         addColorModel(line1)
@@ -113,7 +115,7 @@ class AirHockeyRenderer1(private val context: Context,isPerspective:Boolean) : B
             value.texture= context.loadTexture(value.resId)
         }
 
-        gl?.glEnable(GLES20.GL_BLEND)
+        gl?.glEnable(GL_BLEND)
         gl?.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
     }
 
@@ -126,19 +128,52 @@ class AirHockeyRenderer1(private val context: Context,isPerspective:Boolean) : B
 
         super.onDrawFrame(gl)
 
-        drawColorModel()
-        drawTextureModel()
+
     }
 
     override fun drawTextureModel() {
         textureModelMap.forEach { key, value ->
-            drawTextureModel(value)
+            if (value.hierarchy == HierarchyClass.ONE) {
+                drawTextureModel(value)
+            }
+        }
+        textureModelMap.forEach { key, value ->
+            if (value.hierarchy == HierarchyClass.TWO) {
+                drawTextureModel(value)
+            }
+        }
+        textureModelMap.forEach { key, value ->
+            if (value.hierarchy == HierarchyClass.THREE) {
+                drawTextureModel(value)
+            }
+        }
+        textureModelMap.forEach { key, value ->
+            if (value.hierarchy == HierarchyClass.FOUR) {
+                drawTextureModel(value)
+            }
         }
     }
 
     override fun drawColorModel() {
         colorModelMap.forEach { key, value ->
-            drawColorModel(value)
+            if (value.hierarchy == HierarchyClass.ONE) {
+                drawColorModel(value)
+            }
+        }
+        colorModelMap.forEach { key, value ->
+            if (value.hierarchy == HierarchyClass.TWO) {
+                drawColorModel(value)
+            }
+        }
+        colorModelMap.forEach { key, value ->
+            if (value.hierarchy == HierarchyClass.THREE) {
+                drawColorModel(value)
+            }
+        }
+        colorModelMap.forEach { key, value ->
+            if (value.hierarchy == HierarchyClass.FOUR) {
+                drawColorModel(value)
+            }
         }
     }
 

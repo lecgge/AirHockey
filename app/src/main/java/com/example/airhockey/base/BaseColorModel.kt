@@ -5,7 +5,7 @@ import com.example.airhockey.data.VertexArray
 import com.example.airhockey.objects.DrawCommand
 import com.example.airhockey.programs.ColorShaderProgram
 
-abstract class BaseColorModel(var id: Int, var position: Point) : IModel {
+abstract class BaseColorModel(var id: Int, var position: Point,var hierarchy:Int) : IModel {
     lateinit var vertexArray: VertexArray
     lateinit var drawList: List<DrawCommand>
 
@@ -15,7 +15,6 @@ abstract class BaseColorModel(var id: Int, var position: Point) : IModel {
             attributeLocation = colorShaderProgram.aPositionLocation,
             componentCount = POSITION_COMPONENT_COUNT,
             stride = 0
-
         )
     }
 

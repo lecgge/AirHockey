@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.airhockey.AirHockeyRender.AirHockeyRenderer1
 import com.example.airhockey.base.GLESHelper
+import com.example.airhockey.base.HierarchyClass
 import com.example.airhockey.base.OnTouchListener
 import com.example.airhockey.objects.Car
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +42,8 @@ class BlankFragment : Fragment() {
             position = Point(x, y, 0F),
             resId = R.drawable.car,
             isTurn = true,
-            turn = angle
+            turn = angle,
+            HierarchyClass.TWO
         ))
         GLESHelper.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -54,7 +56,6 @@ class BlankFragment : Fragment() {
                                 GLESHelper.renderer.change(i.toFloat())
                             }
 
-
                             GLESHelper.renderer.moveTextureModel(
                                 Car(
                                     id = 0,
@@ -62,7 +63,8 @@ class BlankFragment : Fragment() {
                                     position = Point(x, y, 0F),
                                     resId = R.drawable.car,
                                     isTurn = true,
-                                    turn = angle
+                                    turn = angle,
+                                    HierarchyClass.TWO
                                 )
                             )
                         }

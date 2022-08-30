@@ -4,6 +4,8 @@ import Point
 import Ray
 import android.content.Context
 import android.opengl.GLES20
+import android.opengl.GLES20.GL_ONE
+import android.opengl.GLES20.GL_ONE_MINUS_DST_ALPHA
 import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.opengl.Matrix.rotateM
@@ -62,6 +64,9 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
     //颜色着色器程序-颜色属性
     var color:Color = Color(1f,1f,1f)
 
+    //页面刷新颜色
+    var clearColor = Color(0f,0f,0f,0f)
+
     /**
      * 边界
      */
@@ -72,7 +77,7 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         //设置Clear颜色
-        GLES20.glClearColor(0f, 0f, 0f, 0f)
+        GLES20.glClearColor(clearColor.red,clearColor.green,clearColor.blue,clearColor.alpha)
         textureShaderProgram = TextureShaderProgram(context)
         colorShaderProgram = ColorShaderProgram(context)
 
@@ -120,16 +125,11 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
             1f,
             0f
         )
-
-//        gl?.glEnable(GLES20.GL_BLEND)
-//        gl?.glBlendFunc(GL_ONE, GL_ONE_MINUS_DST_ALPHA)
-
     }
 
     override fun onDrawFrame(gl: GL10?) {
         //清除之前绘制内容
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-
 
         if (isPerspective) {
             //投影矩阵和视图矩阵相乘的结果缓存到viewProjectionMatrix
@@ -151,7 +151,10 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
                 0
             )
         }
-
+        //绘制颜色模型
+        drawColorModel()
+        //绘制纹理模型
+        drawTextureModel()
     }
 
     //保证value的值不小于min而且不大于max
