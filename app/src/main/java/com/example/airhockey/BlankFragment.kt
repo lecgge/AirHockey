@@ -12,6 +12,9 @@ import com.example.airhockey.AirHockeyRender.AirHockeyRenderer1
 import com.example.airhockey.base.GLESHelper
 import com.example.airhockey.base.OnTouchListener
 import com.example.airhockey.objects.Car
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 
 class BlankFragment : Fragment() {
@@ -24,20 +27,22 @@ class BlankFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        activity?.apply {
-            width = windowManager.currentWindowMetrics.bounds.width()
-        }
-
-        activity?.apply {
-            height = windowManager.currentWindowMetrics.bounds.height()
-        }
-        context?.let { GLESHelper.init(context = it, renderer = AirHockeyRenderer1(it)) }
+        context?.let { GLESHelper.init(context = it, renderer = AirHockeyRenderer1(it,true)) }
 
         var angle = 0f
         var x = -0.35f
         var y = 0f
 
         var tag = false
+
+        GLESHelper.renderer.addTextureModel(Car(
+            id = 1,
+            context = App.context,
+            position = Point(x, y, 0F),
+            resId = R.drawable.car,
+            isTurn = true,
+            turn = angle
+        ))
         GLESHelper.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.actionMasked) {
@@ -46,7 +51,7 @@ class BlankFragment : Fragment() {
                         GLESHelper.airGLSurfaceView.queueEvent {
 
                             for (i in 0..10) {
-                                GLESHelper.renderer.change(i)
+                                GLESHelper.renderer.change(i.toFloat())
                             }
 
 

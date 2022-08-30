@@ -3,6 +3,8 @@ package com.example.airhockey.base
 import Point
 import android.content.Context
 import android.opengl.GLES20
+import android.opengl.GLSurfaceView
+import android.util.Log
 import androidx.annotation.DrawableRes
 import com.example.airhockey.data.Constants
 import com.example.airhockey.data.VertexArray

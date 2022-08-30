@@ -8,17 +8,15 @@ import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.opengl.Matrix.rotateM
 import android.util.Log
-import com.example.airhockey.App
-import com.example.airhockey.R
-import com.example.airhockey.objects.Car
-import com.example.airhockey.objects.Line
+import androidx.compose.ui.graphics.Color
 import com.example.airhockey.programs.ColorShaderProgram
 import com.example.airhockey.programs.TextureShaderProgram
+import com.example.airhockey.util.loadTexture
 import to
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Renderer {
+abstract class BaseRenderer(private val context: Context,var isPerspective:Boolean) : GLSurfaceView.Renderer, ModelMap {
     /**
      * 透视投影矩阵
      */
@@ -47,7 +45,7 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     /**
      * 模型矩阵与投影视图矩阵相乘后的结果矩阵
      */
-    val modelViewProjectionMatrix = FloatArray(16)
+    var modelViewProjectionMatrix = FloatArray(16)
 
     /**
      * [viewProjectionMatrix]的逆矩阵
@@ -75,20 +73,13 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         //设置Clear颜色
-        GLES20.glClearColor(1f, 0f, 0f, 0f)
+        GLES20.glClearColor(0f, 0f, 0f, 0f)
         textureShaderProgram = TextureShaderProgram(context)
         colorShaderProgram = ColorShaderProgram(context)
 
-        addTextureModel(
-            Car(
-                id = 0,
-                context = App.context,
-                position = Point(-0.35f, 0.1f, 0F),
-                resId = R.drawable.car,
-                isTurn = false,
-                turn = -5f
-            )
-        )
+        textureModelMap.forEach { key,value ->
+            value.texture = context.loadTexture(value.texture)
+        }
     }
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
@@ -98,7 +89,7 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
         Matrix.perspectiveM(
             projectionMatrix,
             0,
-            45f,
+            -45f,
             width.toFloat() / height.toFloat(),
             1f,
             10f
@@ -137,8 +128,6 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
     override fun onDrawFrame(gl: GL10?) {
         //清除之前绘制内容
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
-
-        //投影矩阵和视图矩阵相乘的结果缓存到viewProjectionMatrix
         Matrix.multiplyMM(
             viewProjectionMatrix,
             0,
@@ -147,25 +136,49 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
             viewMatrix,
             0
         )
-
+//        if (isPerspective) {
+//            //投影矩阵和视图矩阵相乘的结果缓存到viewProjectionMatrix
+//
+//        } else {
+//            Matrix.multiplyMM(
+//                viewProjectionMatrix,
+//                0,
+//                translationMatrix,
+//                0,
+//                viewMatrix,
+//                0
+//            )
+//        }
 
     }
 
-    fun addTextureModel(model: BaseTextureModel) {
+    abstract fun drawTextureModel()
+
+    abstract fun drawColorModel()
+
+    fun addTextureModelImpl(model: BaseTextureModel) {
         if (modelMap.containsKey(model.id)) {
-            moveTextureModel(model)
+            moveTextureModelImpl(model)
         } else {
             modelMap.put(model.id, model)
         }
     }
 
-    fun moveTextureModel(model: BaseTextureModel) {
+    abstract fun addTextureModel(model: BaseTextureModel)
+
+    abstract fun moveTextureModel(model: BaseTextureModel)
+
+    abstract fun addColorModel(model: BaseColorModel)
+
+    abstract fun moveColorModel(model: BaseColorModel)
+
+    fun moveTextureModelImpl(model: BaseTextureModel) {
         if (modelMap.containsKey(model.id)) {
             modelMap.get(model.id)?.position = model.position
             modelMap.get(model.id)?.isTurn = model.isTurn
             modelMap.get(model.id)?.turn = model.turn
         } else {
-            addTextureModel(model)
+            addTextureModelImpl(model)
         }
     }
 
@@ -194,35 +207,35 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
         model.draw(model.drawInfo.shaper, model.drawInfo.first, model.drawInfo.count)
     }
 
-    fun positionObjectInScene(model: BaseTextureModel) {
-        Matrix.setIdentityM(modelMatrix, 0)
-        if (model.isTurn) {
-            Log.d("TAG", "positionObjectInScene: ${model.turn}")
-            rotateM(modelMatrix, 0, model.turn, 0f, 0f, 1f)
-        } else {
-            rotateM(modelMatrix,0,0f,0f,0f,1f)
-        }
-        Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
-        if (model.isPerspective) {
-            Matrix.multiplyMM(
-                modelViewProjectionMatrix, 0, viewProjectionMatrix,
-                0, modelMatrix, 0
-            )
-        } else {
-            Matrix.multiplyMM(
-                modelViewProjectionMatrix, 0, translationMatrix,
-                0, modelMatrix, 0
-            )
-        }
+    fun drawColorModel(model: BaseColorModel) {
+        positionObjectInScene(model)
+        colorShaderProgram.useProgram()
+        colorShaderProgram.setUniforms(modelViewProjectionMatrix, Color(1f, 1f, 1f))
+        model.bindData(colorShaderProgram = colorShaderProgram)
+        model.draw()
     }
 
-    fun positionObjectInScene(model: Line) {
+    fun positionObjectInScene(model: BaseTextureModel) {
         Matrix.setIdentityM(modelMatrix, 0)
-//        rotateM(modelMatrix, 0, -3f, 0f, 0f, 1f)
+        modelViewProjectionMatrix = FloatArray(16)
+        if (model.isTurn) {
+            rotateM(modelMatrix, 0, model.turn, 0f, 0f, 1f)
+        }
         Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
 
         Matrix.multiplyMM(
-            modelViewProjectionMatrix, 0, translationMatrix,
+            modelViewProjectionMatrix, 0, viewProjectionMatrix,
+            0, modelMatrix, 0
+        )
+    }
+
+    fun positionObjectInScene(model: BaseColorModel) {
+        Matrix.setIdentityM(modelMatrix, 0)
+//        rotateM(modelMatrix, 0, -180f, 0f, 1f, 0f)
+        Matrix.translateM(modelMatrix, 0, model.position.x, model.position.y, model.position.z)
+
+        Matrix.multiplyMM(
+            modelViewProjectionMatrix, 0, viewProjectionMatrix,
             0, modelMatrix, 0
         )
     }
@@ -264,5 +277,5 @@ abstract class BaseRenderer(private val context: Context) : GLSurfaceView.Render
         vector[2] /= vector[3]
     }
 
-    abstract fun change(y: Int)
+    abstract fun change(y: Float)
 }
