@@ -25,6 +25,7 @@ abstract class BaseTextureModel(
 
     val vertexArray: VertexArray = VertexArray(vertexData)
     var texture: Int = 0
+    var isBlend:Boolean = true
     init {
         texture = context.loadTexture(resId)
     }
@@ -53,8 +54,10 @@ abstract class BaseTextureModel(
     }
 
     override fun draw(drawShaper: Int, first: Int, count: Int) {
-        GLES20.glEnable(GLES20.GL_BLEND)
-        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
+        if (isBlend) {
+            GLES20.glEnable(GLES20.GL_BLEND)
+            GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
+        }
         GLES20.glDrawArrays(drawShaper, first, count)
     }
 

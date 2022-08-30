@@ -28,7 +28,7 @@ class BlankFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        context?.let { GLESHelper.init(context = it, renderer = AirHockeyRenderer1(it,true)) }
+        context?.let { GLESHelper.init(context = it, renderer = AirHockeyRenderer1(it,false)) }
 
         var angle = 0f
         var x = -0.35f
@@ -43,7 +43,7 @@ class BlankFragment : Fragment() {
             resId = R.drawable.car,
             isTurn = true,
             turn = angle,
-            HierarchyClass.TWO
+            HierarchyClass.MID_LAYER
         ))
         GLESHelper.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -56,6 +56,7 @@ class BlankFragment : Fragment() {
                                 GLESHelper.renderer.change(i.toFloat())
                             }
 
+
                             GLESHelper.renderer.moveTextureModel(
                                 Car(
                                     id = 0,
@@ -64,7 +65,7 @@ class BlankFragment : Fragment() {
                                     resId = R.drawable.car,
                                     isTurn = true,
                                     turn = angle,
-                                    HierarchyClass.TWO
+                                    HierarchyClass.MID_LAYER
                                 )
                             )
                         }

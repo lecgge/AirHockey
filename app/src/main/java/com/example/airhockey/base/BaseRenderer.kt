@@ -142,12 +142,14 @@ abstract class BaseRenderer(private val context: Context,var isPerspective:Boole
                 0
             )
         } else {
+            val identityMatrix = FloatArray(16)
+            Matrix.setIdentityM(identityMatrix,0)
             Matrix.multiplyMM(
                 viewProjectionMatrix,
                 0,
                 translationMatrix,
                 0,
-                viewMatrix,
+                identityMatrix,
                 0
             )
         }
